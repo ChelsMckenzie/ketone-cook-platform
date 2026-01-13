@@ -1,7 +1,7 @@
 import { Clock, ChefHat, Camera, BookOpen } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -84,9 +84,12 @@ export default function Home() {
           <p className="mb-6 text-sm text-muted-foreground">
             Sign in to begin your personalized Keto journey
           </p>
-          <button className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+          <a
+            href="/login"
+            className="block w-full rounded-lg bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
             Sign In
-          </button>
+          </a>
         </div>
       </section>
     </div>
