@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/types/actions";
-import type { Json } from "@/types/database";
+import type { Json, RecipeInsert, RecipeFavoriteInsert } from "@/types/database";
 
 export interface RecipeData {
   title: string;
@@ -50,19 +50,22 @@ export async function createRecipe(
     };
   }
 
-  const { data: insertedData, error } = await supabase
-    .from("recipes")
-    .insert({
-      user_id: user.id,
-      title: data.title,
-      ingredients: data.ingredients,
-      instructions: data.instructions,
-      macros: data.macros || null,
-      cooking_time: data.cooking_time || null,
-      difficulty: data.difficulty || null,
-      category: data.category || null,
-      is_public: data.is_public ?? false,
-    })
+  const recipeData: RecipeInsert = {
+    user_id: user.id,
+    title: data.title,
+    ingredients: data.ingredients,
+    instructions: data.instructions,
+    macros: data.macros || null,
+    cooking_time: data.cooking_time || null,
+    difficulty: data.difficulty || null,
+    category: data.category || null,
+    is_public: data.is_public ?? false,
+  };
+
+  // Type assertion needed due to Supabase type inference limitations
+  const { data: insertedData, error } = await (supabase
+    .from("recipes") as any)
+    .insert(recipeData)
     .select("id")
     .single();
 
@@ -101,8 +104,9 @@ export async function toggleRecipeFavorite(
   }
 
   // Check if favorite exists
-  const { data: existing } = await supabase
-    .from("recipe_favorites")
+  // Type assertion needed due to Supabase type inference limitations
+  const { data: existing } = await (supabase
+    .from("recipe_favorites") as any)
     .select("id")
     .eq("user_id", user.id)
     .eq("recipe_id", recipeId)
@@ -110,8 +114,9 @@ export async function toggleRecipeFavorite(
 
   if (existing) {
     // Remove favorite
-    const { error } = await supabase
-      .from("recipe_favorites")
+    // Type assertion needed due to Supabase type inference limitations
+    const { error } = await (supabase
+      .from("recipe_favorites") as any)
       .delete()
       .eq("id", existing.id);
 
@@ -123,10 +128,15 @@ export async function toggleRecipeFavorite(
     return { success: true, data: { favorited: false } };
   } else {
     // Add favorite
-    const { error } = await supabase.from("recipe_favorites").insert({
+    const favoriteData: RecipeFavoriteInsert = {
       user_id: user.id,
       recipe_id: recipeId,
-    });
+    };
+
+    // Type assertion needed due to Supabase type inference limitations
+    const { error } = await (supabase
+      .from("recipe_favorites") as any)
+      .insert(favoriteData);
 
     if (error) {
       return { success: false, error: error.message };
@@ -154,8 +164,9 @@ export async function deleteRecipe(
     };
   }
 
-  const { error } = await supabase
-    .from("recipes")
+  // Type assertion needed due to Supabase type inference limitations
+  const { error } = await (supabase
+    .from("recipes") as any)
     .delete()
     .eq("id", recipeId)
     .eq("user_id", user.id);
@@ -188,8 +199,9 @@ export async function toggleRecipeVisibility(
     };
   }
 
-  const { error } = await supabase
-    .from("recipes")
+  // Type assertion needed due to Supabase type inference limitations
+  const { error } = await (supabase
+    .from("recipes") as any)
     .update({ is_public: isPublic })
     .eq("id", recipeId)
     .eq("user_id", user.id);

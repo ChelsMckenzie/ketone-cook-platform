@@ -34,7 +34,7 @@ const onboardingSchema = z.object({
   }),
   last_period_end: z.string().optional(),
   address: z.string().min(1, "Address is required"),
-  fasting_goal: z.coerce.number().min(0, "Fasting goal must be a positive number"),
+  fasting_goal: z.number().min(0, "Fasting goal must be a positive number"),
 });
 
 type OnboardingFormValues = z.infer<typeof onboardingSchema>;

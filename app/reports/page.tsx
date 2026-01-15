@@ -62,7 +62,7 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
     .eq("id", user.id)
     .single();
 
-  const fastingGoal = profileData?.fasting_goal || 16;
+  const fastingGoal = (profileData as { fasting_goal?: number } | null)?.fasting_goal || 16;
 
   // Process data for reports
   const ketoneReadings = logs

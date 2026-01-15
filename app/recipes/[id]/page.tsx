@@ -20,22 +20,31 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .eq("id", id)
     .single();
 
-  if (!recipe || !recipe.is_public) {
+  type RecipeMetadata = {
+    title: string;
+    ingredients: unknown;
+    macros: unknown;
+    is_public: boolean;
+  };
+
+  const recipeData = recipe as RecipeMetadata | null;
+
+  if (!recipeData || !recipeData.is_public) {
     return {
       title: "Recipe",
       robots: { index: false, follow: false },
     };
   }
 
-  const ingredients = Array.isArray(recipe.ingredients)
-    ? recipe.ingredients.slice(0, 5).join(", ")
+  const ingredients = Array.isArray(recipeData.ingredients)
+    ? recipeData.ingredients.slice(0, 5).join(", ")
     : "";
 
   return {
-    title: recipe.title,
-    description: `${recipe.title} - A delicious keto recipe on KetoMate. Made with ${ingredients}. Perfect for your ketogenic diet.`,
+    title: recipeData.title,
+    description: `${recipeData.title} - A delicious keto recipe on KetoMate. Made with ${ingredients}. Perfect for your ketogenic diet.`,
     openGraph: {
-      title: `${recipe.title} | KetoMate Recipe`,
+      title: `${recipeData.title} | KetoMate Recipe`,
       description: `A delicious keto recipe. Made with ${ingredients}.`,
       type: "article",
     },

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { isProfileComplete } from "@/lib/utils/profile";
+import type { ProfileInsert } from "@/types/database";
 
 export async function signUp(formData: FormData) {
   const supabase = await createClient();
@@ -34,12 +35,21 @@ export async function signUp(formData: FormData) {
 
   if (data.user) {
     // Create profile entry
-    await supabase.from("profile").upsert({
+    const profileData: ProfileInsert = {
       id: data.user.id,
       email: data.user.email || email,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    });
+    };
+    
+    // Type assertion needed due to Supabase type inference limitations
+    const { error: profileError } = await (supabase
+      .from("profile") as any)
+      .upsert(profileData);
+    
+    if (profileError) {
+      console.error("Error creating profile:", profileError);
+    }
 
     // Check if email confirmation is required
     const {

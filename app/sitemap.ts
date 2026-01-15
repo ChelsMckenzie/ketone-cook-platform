@@ -36,8 +36,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .order("created_at", { ascending: false })
       .limit(100);
 
+    type RecipeSitemap = {
+      id: string;
+      created_at: string;
+    };
+
     const recipePages: MetadataRoute.Sitemap =
-      recipes?.map((recipe) => ({
+      (recipes as RecipeSitemap[] | null)?.map((recipe) => ({
         url: `${baseUrl}/recipes/${recipe.id}`,
         lastModified: new Date(recipe.created_at),
         changeFrequency: "monthly" as const,

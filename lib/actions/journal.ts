@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/types/actions";
 import { JOURNAL_ENTRY_TYPES } from "@/lib/constants";
-import type { MacroData, JournalEntryType } from "@/types/database";
+import type { MacroData, JournalEntryType, LogInsert } from "@/types/database";
 
 export interface JournalEntryData {
   type: JournalEntryType;
@@ -71,15 +71,18 @@ export async function createJournalEntry(
     macrosData.ketone_reading = ketone_reading;
   }
 
-  const { data: insertedData, error } = await supabase
-    .from("logs")
-    .insert({
-      user_id: user.id,
-      type: type as JournalEntryType,
-      content: content,
-      image_url: null,
-      macros: Object.keys(macrosData).length > 0 ? macrosData : null,
-    })
+  const logData: LogInsert = {
+    user_id: user.id,
+    type: type as JournalEntryType,
+    content: content,
+    image_url: null,
+    macros: Object.keys(macrosData).length > 0 ? macrosData : null,
+  };
+
+  // Type assertion needed due to Supabase type inference limitations
+  const { data: insertedData, error } = await (supabase
+    .from("logs") as any)
+    .insert(logData)
     .select("id")
     .single();
 

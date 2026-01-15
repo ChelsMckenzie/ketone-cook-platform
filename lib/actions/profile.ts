@@ -30,8 +30,9 @@ export async function updateProfile(
     };
   }
 
-  const { error } = await supabase
-    .from("profile")
+  // Type assertion needed due to Supabase type inference limitations
+  const { error } = await (supabase
+    .from("profile") as any)
     .update({
       full_name: data.full_name,
       dob: data.dob || null,

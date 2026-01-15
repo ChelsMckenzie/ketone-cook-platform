@@ -10,14 +10,19 @@ export async function SiteHeader() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let userProfile = null;
+  type UserProfile = {
+    full_name: string | null;
+    email: string | null;
+  };
+
+  let userProfile: UserProfile | null = null;
   if (user) {
     const { data } = await supabase
       .from("profile")
       .select("full_name, email")
       .eq("id", user.id)
       .single();
-    userProfile = data;
+    userProfile = data as UserProfile | null;
   }
 
   return (

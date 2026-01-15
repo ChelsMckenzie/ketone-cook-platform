@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/types/actions";
+import type { ProfileInsert } from "@/types/database";
 
 export interface OnboardingFormData {
   full_name: string;
@@ -32,7 +33,7 @@ export async function updateUserProfile(
     };
   }
 
-  const { error } = await supabase.from("profile").upsert({
+  const profileData: ProfileInsert = {
     id: user.id,
     full_name: data.full_name,
     email: user.email || "",
@@ -42,7 +43,10 @@ export async function updateUserProfile(
     address: data.address,
     fasting_goal: data.fasting_goal,
     updated_at: new Date().toISOString(),
-  });
+  };
+
+  // Type assertion needed due to Supabase type inference limitations
+  const { error } = await (supabase.from("profile") as any).upsert(profileData);
 
   if (error) {
     return {

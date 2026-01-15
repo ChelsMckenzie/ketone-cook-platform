@@ -58,7 +58,7 @@ const recipeSchema = z.object({
     fat: z.number(),
     calories: z.number(),
   }),
-  cooking_time: z.coerce.number().min(1),
+  cooking_time: z.number().min(1),
   difficulty: z.enum(["easy", "medium", "hard"]),
   category: z.enum(["breakfast", "lunch", "dinner", "snack", "dessert"]),
   is_public: z.boolean(),
@@ -347,7 +347,11 @@ export function RecipeGenerator() {
                       <FormItem>
                         <FormLabel>Cooking Time (minutes)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

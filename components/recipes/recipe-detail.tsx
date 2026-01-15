@@ -12,11 +12,21 @@ interface RecipeDetailProps {
 export function RecipeDetail({ recipe }: RecipeDetailProps) {
   const ingredients = Array.isArray(recipe.ingredients)
     ? recipe.ingredients
-    : typeof recipe.ingredients === "object"
+    : typeof recipe.ingredients === "object" && recipe.ingredients !== null
       ? Object.values(recipe.ingredients)
       : [];
 
-  const macros = recipe.macros && typeof recipe.macros === "object" ? recipe.macros : null;
+  type MacrosType = {
+    carbs?: number;
+    protein?: number;
+    fat?: number;
+    calories?: number;
+  };
+
+  const macros: MacrosType | null =
+    recipe.macros && typeof recipe.macros === "object" && !Array.isArray(recipe.macros)
+      ? (recipe.macros as MacrosType)
+      : null;
 
   return (
     <div className="space-y-6">
