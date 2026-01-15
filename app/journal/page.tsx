@@ -30,13 +30,17 @@ export default async function JournalPage() {
     .limit(50);
 
   // Load meal logs for linking (only meal_note entries)
-  const { data: mealLogs } = await supabase
+  const { data: mealLogs, error: mealLogsError } = await supabase
     .from("logs")
     .select("id, content, created_at, image_url")
     .eq("user_id", user.id)
     .eq("type", "meal_note")
     .order("created_at", { ascending: false })
     .limit(20);
+
+  if (mealLogsError) {
+    console.error("Error fetching meal logs:", mealLogsError);
+  }
 
   return (
     <div className="min-h-screen bg-background">

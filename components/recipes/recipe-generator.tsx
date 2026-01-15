@@ -73,6 +73,7 @@ export function RecipeGenerator() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [ingredientInput, setIngredientInput] = useState("");
   const [pantryItems, setPantryItems] = useState<string[]>([]);
+  const [includePantryItems, setIncludePantryItems] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState<GeneratedRecipe | null>(
     null
@@ -144,7 +145,7 @@ export function RecipeGenerator() {
   };
 
   const handleGenerate = async (isRegeneration: boolean = false) => {
-    if (ingredients.length === 0 && pantryItems.length === 0) {
+    if (ingredients.length === 0 && (!includePantryItems || pantryItems.length === 0)) {
       setError("Please add at least one fresh ingredient or set up your pantry");
       return;
     }
@@ -159,8 +160,10 @@ export function RecipeGenerator() {
     setIsGenerating(true);
     setError(null);
 
-    // Combine pantry items with fresh ingredients
-    const allIngredients = [...pantryItems, ...ingredients];
+    // Combine pantry items with fresh ingredients (only if toggle is ON)
+    const allIngredients = includePantryItems
+      ? [...pantryItems, ...ingredients]
+      : ingredients;
 
     try {
       const result = await generateRecipe(allIngredients);
@@ -245,11 +248,28 @@ export function RecipeGenerator() {
       {/* Pantry Manager Section */}
       <PantryManager />
 
+      {/* Pantry Toggle Switch */}
+      {pantryItems.length > 0 && (
+        <div className="flex items-center justify-between rounded-xl border-2 border-border bg-card p-4 shadow-sm">
+          <div className="space-y-0.5">
+            <p className="text-sm font-medium">Include Pantry Items</p>
+            <p className="text-xs text-muted-foreground">
+              Automatically include your {pantryItems.length} pantry item{pantryItems.length !== 1 ? "s" : ""} when generating recipes
+            </p>
+          </div>
+          <Switch
+            checked={includePantryItems}
+            onCheckedChange={setIncludePantryItems}
+          />
+        </div>
+      )}
+
       {/* Fresh Ingredients Input Section */}
       <div className="rounded-xl border-2 border-border bg-card p-6 shadow-sm">
         <h2 className="mb-2 text-xl font-semibold">Fresh Ingredients</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          Add fresh ingredients you have available today. Your pantry items will be automatically included.
+          Add fresh ingredients you have available today.
+          {pantryItems.length > 0 && includePantryItems && " Your pantry items will be automatically included."}
         </p>
         <div className="space-y-4">
           <div className="flex gap-2">
@@ -290,9 +310,13 @@ export function RecipeGenerator() {
           )}
 
           {pantryItems.length > 0 && (
-            <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+            <div className={`mt-4 rounded-lg border p-3 ${
+              includePantryItems
+                ? "border-border bg-muted/30"
+                : "border-muted bg-muted/10 opacity-60"
+            }`}>
               <p className="mb-2 text-xs font-medium text-muted-foreground">
-                Pantry items (will be included):
+                Pantry items {includePantryItems ? "(will be included)" : "(excluded)"}:
               </p>
               <div className="flex flex-wrap gap-2">
                 {pantryItems.map((item) => (
@@ -310,7 +334,7 @@ export function RecipeGenerator() {
           <Button
             type="button"
             onClick={() => handleGenerate(false)}
-            disabled={isGenerating || (ingredients.length === 0 && pantryItems.length === 0)}
+            disabled={isGenerating || (ingredients.length === 0 && (!includePantryItems || pantryItems.length === 0))}
             className="w-full rainbow-gradient text-white"
           >
             {isGenerating ? (

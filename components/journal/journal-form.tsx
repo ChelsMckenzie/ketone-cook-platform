@@ -209,7 +209,7 @@ export function JournalForm({ mealLogs }: JournalFormProps) {
             />
           )}
 
-          {entryType === "meal_note" && mealLogs.length > 0 && (
+          {entryType === "meal_note" && (
             <FormField
               control={form.control}
               name="linked_meal_id"
@@ -222,24 +222,45 @@ export function JournalForm({ mealLogs }: JournalFormProps) {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a meal to link" />
+                        <SelectValue
+                          placeholder={
+                            mealLogs.length === 0
+                              ? "No previous meals found"
+                              : "Select a meal to link"
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="max-h-[300px]">
-                      <SelectItem value="">None</SelectItem>
-                      {mealLogs.map((meal) => {
-                        const mealName = meal.content.split("\n")[0] || "Meal";
-                        const date = new Date(meal.created_at).toLocaleDateString();
-                        return (
-                          <SelectItem key={meal.id} value={meal.id}>
-                            {mealName} - {date}
-                          </SelectItem>
-                        );
-                      })}
+                      <SelectItem value="">None - New meal note</SelectItem>
+                      {mealLogs.length > 0 ? (
+                        mealLogs.map((meal) => {
+                          const mealName = meal.content.split("\n")[0] || "Meal";
+                          const date = new Date(meal.created_at).toLocaleDateString(
+                            "en-ZA",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          );
+                          return (
+                            <SelectItem key={meal.id} value={meal.id}>
+                              {mealName} ({date})
+                            </SelectItem>
+                          );
+                        })
+                      ) : (
+                        <SelectItem value="" disabled>
+                          No previous meals available
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Link this journal entry to a previously logged meal
+                    {mealLogs.length === 0
+                      ? "Log meals using the Meal Logger to link them here"
+                      : "Link this journal entry to a previously logged meal"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
