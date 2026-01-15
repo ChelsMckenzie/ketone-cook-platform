@@ -13,8 +13,8 @@ export const RECIPES_PAGE_SIZE = 12;
 export const JOURNAL_ENTRIES_LIMIT = 50;
 
 // Image compression constants
-export const MAX_IMAGE_SIZE_BYTES = 900 * 1024; // 900KB
-export const COMPRESSED_IMAGE_MAX_BYTES = 900 * 1024; // 900KB
+export const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB - max original file size
+export const COMPRESSED_IMAGE_MAX_BYTES = 1024 * 1024; // 1MB - target compressed size
 export const IMAGE_COMPRESSION_QUALITY = 0.8;
 export const IMAGE_COMPRESSION_FALLBACK_QUALITY = 0.6;
 export const IMAGE_MAX_DIMENSION = 1024;

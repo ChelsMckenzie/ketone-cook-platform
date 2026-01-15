@@ -32,7 +32,7 @@ export default async function Home() {
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Smart keto, simplified. Generate recipes with AI, track your fasting windows, 
-            analyze meals with photo recognition, and monitor your ketone levels — all in one place.
+            analyse meals with photo recognition, and monitor your ketone levels — all in one place.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button asChild size="lg" className="rainbow-gradient text-white">
@@ -57,7 +57,7 @@ export default async function Home() {
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {/* Fasting Dashboard Card */}
-          <div className="group relative rounded-xl border-2 border-border bg-card p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
+          <div className="group relative rounded-xl border-2 border-border bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950/20 dark:to-rose-950/20 p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
             <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-lg rainbow-gradient">
               <Clock className="h-6 w-6 text-white drop-shadow-sm" />
             </div>
@@ -70,7 +70,7 @@ export default async function Home() {
           </div>
 
           {/* Smart Kitchen Card */}
-          <div className="group relative rounded-xl border-2 border-border bg-card p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
+          <div className="group relative rounded-xl border-2 border-border bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
             <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-lg rainbow-gradient">
               <ChefHat className="h-6 w-6 text-white drop-shadow-sm" />
             </div>
@@ -83,7 +83,7 @@ export default async function Home() {
           </div>
 
           {/* Visual Meal Logger Card */}
-          <div className="group relative rounded-xl border-2 border-border bg-card p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
+          <div className="group relative rounded-xl border-2 border-border bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
             <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-lg rainbow-gradient">
               <Camera className="h-6 w-6 text-white drop-shadow-sm" />
             </div>
@@ -96,7 +96,7 @@ export default async function Home() {
           </div>
 
           {/* Daily Journal Card */}
-          <div className="group relative rounded-xl border-2 border-border bg-card p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
+          <div className="group relative rounded-xl border-2 border-border bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 p-6 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:border-primary/50">
             <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-lg rainbow-gradient">
               <BookOpen className="h-6 w-6 text-white drop-shadow-sm" />
             </div>

@@ -108,70 +108,57 @@ export function MealLoggerForm() {
 
                 ctx.drawImage(img, 0, 0, width, height);
 
-                canvas.toBlob(
-                  (blob) => {
-                    if (!blob) {
-                      reject(new Error("Failed to compress image"));
-                      return;
-                    }
+                // Recursive function to compress until under 1MB
+                const compressWithQuality = (currentQuality: number): void => {
+                  canvas.toBlob(
+                    (blob) => {
+                      if (!blob) {
+                        reject(new Error("Failed to compress image"));
+                        return;
+                      }
 
-                    if (blob.size > COMPRESSED_IMAGE_MAX_BYTES) {
-                      canvas.toBlob(
-                        (smallerBlob) => {
-                          if (!smallerBlob) {
-                            reject(
-                              new Error("Failed to compress image to required size")
-                            );
-                            return;
-                          }
-                          const fileReader = new FileReader();
-                          fileReader.onloadend = () => {
-                            if (
-                              fileReader.result &&
-                              typeof fileReader.result === "string"
-                            ) {
-                              resolve(fileReader.result);
-                            } else {
-                              reject(
-                                new Error(
-                                  "Failed to convert compressed image to data URL"
-                                )
-                              );
-                            }
-                          };
-                          fileReader.onerror = () => {
-                            reject(new Error("Failed to read compressed image"));
-                          };
-                          fileReader.readAsDataURL(smallerBlob);
-                        },
-                        "image/jpeg",
-                        IMAGE_COMPRESSION_FALLBACK_QUALITY
-                      );
-                    } else {
-                      const fileReader = new FileReader();
-                      fileReader.onloadend = () => {
-                        if (
-                          fileReader.result &&
-                          typeof fileReader.result === "string"
-                        ) {
-                          resolve(fileReader.result);
+                      if (blob.size > COMPRESSED_IMAGE_MAX_BYTES) {
+                        // If still too large, reduce quality further
+                        const newQuality = Math.max(0.1, currentQuality - 0.1);
+                        if (newQuality >= 0.1) {
+                          compressWithQuality(newQuality);
                         } else {
                           reject(
                             new Error(
-                              "Failed to convert compressed image to data URL"
+                              "Unable to compress image to required size. Please try a smaller image."
                             )
                           );
                         }
-                      };
-                      fileReader.onerror = () => {
-                        reject(new Error("Failed to read compressed image"));
-                      };
-                      fileReader.readAsDataURL(blob);
-                    }
-                  },
-                  "image/jpeg",
-                  quality
-                );
+                      } else {
+                        // Successfully compressed to under 1MB
+                        const fileReader = new FileReader();
+                        fileReader.onloadend = () => {
+                          if (
+                            fileReader.result &&
+                            typeof fileReader.result === "string"
+                          ) {
+                            resolve(fileReader.result);
+                          } else {
+                            reject(
+                              new Error(
+                                "Failed to convert compressed image to data URL"
+                              )
+                            );
+                          }
+                        };
+                        fileReader.onerror = () => {
+                          reject(new Error("Failed to read compressed image"));
+                        };
+                        fileReader.readAsDataURL(blob);
+                      }
+                    },
+                    "image/jpeg",
+                    currentQuality
+                  );
+                };
+
+                // Start compression with initial quality
+                compressWithQuality(quality);
               } catch (err) {
                 reject(
                   err instanceof Error ? err : new Error("Failed to process image")
@@ -205,37 +192,22 @@ export function MealLoggerForm() {
       setAnalysis(null);
 
       if (file.size > MAX_IMAGE_SIZE_BYTES) {
-        setError("Image is too large. Please use an image smaller than 5MB.");
+        setError("Image is too large. Please use an image smaller than 10MB.");
         return;
       }
 
       try {
+        // Always compress images, regardless of original size
         const compressedDataUrl = await compressImage(file);
         setImagePreview(compressedDataUrl);
+        // Store the compressed data URL, not the original file
         form.setValue("image", file);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Unknown error";
-
-        if (file.size < COMPRESSED_IMAGE_MAX_BYTES) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            if (reader.result) {
-              setImagePreview(reader.result as string);
-              form.setValue("image", file);
-            } else {
-              setError(`Failed to process image: ${errorMessage}`);
-            }
-          };
-          reader.onerror = () => {
-            setError(`Failed to process image: ${errorMessage}`);
-          };
-          reader.readAsDataURL(file);
-        } else {
-          setError(
-            `Failed to compress image: ${errorMessage}. Please try a smaller image.`
-          );
-        }
+        setError(
+          `Failed to compress image: ${errorMessage}. Please try a different image.`
+        );
       }
     }
   };
@@ -264,7 +236,7 @@ export function MealLoggerForm() {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : "Failed to analyze image. Please try again.";
+          : "Failed to analyse image. Please try again.";
       setError(errorMessage);
     } finally {
       setIsAnalyzing(false);
@@ -273,7 +245,7 @@ export function MealLoggerForm() {
 
   const onSubmit = async (data: MealFormValues) => {
     if (!analysis) {
-      setError("Please analyze the image first");
+      setError("Please analyse the image first");
       return;
     }
 
@@ -360,7 +332,7 @@ export function MealLoggerForm() {
             </div>
           </div>
 
-          {/* Analyze Button */}
+          {/* Analyse Button */}
           {imagePreview && !analysis && (
             <Button
               type="button"
@@ -371,12 +343,12 @@ export function MealLoggerForm() {
               {isAnalyzing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing Meal...
+                  Analysing Meal...
                 </>
               ) : (
                 <>
                   <Upload className="mr-2 h-4 w-4" />
-                  Analyze with AI
+                  Analyse with AI
                 </>
               )}
             </Button>

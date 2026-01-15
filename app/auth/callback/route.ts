@@ -43,13 +43,54 @@ export async function GET(request: NextRequest) {
 
   // Handle OAuth callback
   if (code && !type) {
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (exchangeError) {
+      console.error("OAuth exchange error:", exchangeError);
+      return NextResponse.redirect(
+        new URL("/login?error=oauth_failed", request.url)
+      );
+    }
+
+    // Ensure profile exists for OAuth users
+    const {
+      data: { user: oauthUser },
+    } = await supabase.auth.getUser();
+
+    if (oauthUser) {
+      const { data: existingProfile } = await supabase
+        .from("profile")
+        .select("id")
+        .eq("id", oauthUser.id)
+        .single();
+
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from("profile")
+          .insert({
+            id: oauthUser.id,
+            email: oauthUser.email || "",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as any);
+
+        if (profileError) {
+          console.error("Error creating OAuth profile:", profileError);
+        }
+      }
+    }
   }
 
   // Check if user has completed onboarding
   const {
     data: { user },
+    error: getUserError,
   } = await supabase.auth.getUser();
+
+  if (getUserError) {
+    console.error("Error getting user:", getUserError);
+    return NextResponse.redirect(new URL("/login?error=auth_failed", request.url));
+  }
 
   if (user) {
     // Check if profile is complete

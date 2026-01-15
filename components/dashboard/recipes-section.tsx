@@ -94,7 +94,7 @@ export function RecipesSection({
             </div>
           )}
           {activeTab === "favorites" &&
-            "No favorite recipes yet. Start favoriting recipes you love!"}
+            "No favourite recipes yet. Start favouriting recipes you love!"}
         </div>
       );
     }
@@ -147,8 +147,8 @@ export function RecipesSection({
                   disabled={isPending}
                   title={
                     favoriteRecipeIds.has(recipe.id)
-                      ? "Remove from favorites"
-                      : "Add to favorites"
+                      ? "Remove from favourites"
+                      : "Add to favourites"
                   }
                 >
                   <Heart
@@ -243,7 +243,7 @@ export function RecipesSection({
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          Favorites ({favoriteRecipes.length})
+          Favourites ({favoriteRecipes.length})
         </button>
       </div>
 

@@ -99,7 +99,7 @@ export async function toggleRecipeFavorite(
   if (authError || !user) {
     return {
       success: false,
-      error: "You must be logged in to favorite recipes.",
+      error: "You must be logged in to favourite recipes.",
     };
   }
 
