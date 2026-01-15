@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -40,6 +41,7 @@ const onboardingSchema = z.object({
 type OnboardingFormValues = z.infer<typeof onboardingSchema>;
 
 export function OnboardingWizard() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -62,7 +64,7 @@ export function OnboardingWizard() {
   const onSubmit = async (data: OnboardingFormValues) => {
     setIsSubmitting(true);
     try {
-      await updateUserProfile({
+      const result = await updateUserProfile({
         full_name: data.full_name,
         dob: data.dob,
         gender: data.gender,
@@ -70,7 +72,24 @@ export function OnboardingWizard() {
         address: data.address,
         fasting_goal: data.fasting_goal,
       });
+
+      // If the server action returns an error, handle it
+      if (result && "error" in result && result.error) {
+        console.error("Error submitting form:", result.error);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // If successful, redirect to dashboard
+      // Note: redirect() in server actions throws, so we handle navigation client-side
+      router.push("/dashboard");
+      router.refresh();
     } catch (error) {
+      // Check if it's a Next.js redirect (which is expected)
+      if (error && typeof error === "object" && "digest" in error) {
+        // This is a Next.js redirect, let it propagate
+        throw error;
+      }
       console.error("Error submitting form:", error);
       setIsSubmitting(false);
     }

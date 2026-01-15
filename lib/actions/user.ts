@@ -18,7 +18,7 @@ export interface OnboardingFormData {
 
 export async function updateUserProfile(
   data: OnboardingFormData
-): Promise<ActionResult | never> {
+): Promise<ActionResult> {
   const supabase = await createClient();
 
   const {
@@ -56,5 +56,9 @@ export async function updateUserProfile(
   }
 
   revalidatePath("/dashboard");
-  redirect("/dashboard");
+  revalidatePath("/", "layout");
+  
+  return {
+    success: true,
+  };
 }
