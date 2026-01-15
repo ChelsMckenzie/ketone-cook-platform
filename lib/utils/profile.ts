@@ -6,7 +6,7 @@ import type { ProfileCheckData } from "@/lib/types/actions";
 export function isProfileComplete(profile: ProfileCheckData | null): boolean {
   if (!profile) return false;
   return Boolean(
-    profile.full_name && profile.address && profile.fasting_goal
+    profile.full_name && profile.city && profile.fasting_goal
   );
 }
 
@@ -16,11 +16,11 @@ export function isProfileComplete(profile: ProfileCheckData | null): boolean {
 export function getMissingProfileFields(
   profile: ProfileCheckData | null
 ): string[] {
-  if (!profile) return ["full_name", "address", "fasting_goal"];
+  if (!profile) return ["full_name", "city", "fasting_goal"];
 
   const missing: string[] = [];
   if (!profile.full_name) missing.push("full_name");
-  if (!profile.address) missing.push("address");
+  if (!profile.city) missing.push("city");
   if (!profile.fasting_goal) missing.push("fasting_goal");
 
   return missing;

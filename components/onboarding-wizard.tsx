@@ -35,7 +35,6 @@ const onboardingSchema = z.object({
     message: "Please select a gender",
   }),
   last_period_end: z.string().optional(),
-  address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   fasting_goal: z.number().min(0, "Fasting goal must be a positive number"),
 });
@@ -54,7 +53,6 @@ export function OnboardingWizard() {
       dob: "",
       gender: undefined,
       last_period_end: "",
-      address: "",
       city: "",
       fasting_goal: 16,
     },
@@ -72,7 +70,6 @@ export function OnboardingWizard() {
         dob: data.dob,
         gender: data.gender,
         last_period_end: data.last_period_end,
-        address: data.address,
         city: data.city,
         fasting_goal: data.fasting_goal,
       });
@@ -110,12 +107,12 @@ export function OnboardingWizard() {
       if (gender === "Female") {
         fieldsToValidate = ["last_period_end"];
       } else {
-        // For non-Female, step 3 is the final step with Address/City/Fasting
-        fieldsToValidate = ["address", "city", "fasting_goal"];
+        // For non-Female, step 3 is the final step with City/Fasting
+        fieldsToValidate = ["city", "fasting_goal"];
       }
     } else if (currentStep === 4) {
       // Final step for Female users
-      fieldsToValidate = ["address", "city", "fasting_goal"];
+      fieldsToValidate = ["city", "fasting_goal"];
     }
 
     const isValid = await form.trigger(fieldsToValidate);
@@ -263,30 +260,10 @@ export function OnboardingWizard() {
             </div>
           )}
 
-          {/* Step 4 (or Step 3 if not Female): Address, City, Fasting Goal */}
+          {/* Step 4 (or Step 3 if not Female): City, Fasting Goal */}
           {((currentStep === 4 && gender === "Female") ||
             (currentStep === 3 && gender !== "Female")) && (
             <div className="space-y-6">
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter your address"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Your street address for personalized recommendations
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="city"

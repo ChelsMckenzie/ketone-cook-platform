@@ -23,7 +23,7 @@ export default async function OnboardingPage() {
 
   const profile = profileData as Profile | null;
 
-  if (profile?.full_name && profile?.address && profile?.fasting_goal) {
+  if (profile?.full_name && profile?.city && profile?.fasting_goal) {
     redirect("/dashboard");
   }
 

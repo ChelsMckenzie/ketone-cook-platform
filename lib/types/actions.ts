@@ -52,12 +52,12 @@ export interface ProfileData {
   dob: string | null;
   gender: string | null;
   last_period_end: string | null;
-  address: string | null;
+  city: string | null;
   fasting_goal: number | null;
 }
 
 export interface ProfileCheckData {
   full_name: string | null;
-  address: string | null;
+  city: string | null;
   fasting_goal: number | null;
 }

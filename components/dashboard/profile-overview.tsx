@@ -34,7 +34,6 @@ const profileSchema = z.object({
     message: "Please select a gender",
   }),
   last_period_end: z.string().optional(),
-  address: z.string().optional(),
   city: z.string().min(1, "City is required"),
   fasting_goal: z.number().min(0, "Fasting goal must be a positive number"),
 });
@@ -47,7 +46,6 @@ interface ProfileOverviewProps {
     dob: string | null;
     gender: string | null;
     last_period_end: string | null;
-    address: string | null;
     city: string | null;
     fasting_goal: number | null;
   };
@@ -67,7 +65,6 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
       dob: profile.dob || "",
       gender: (profile.gender as "Male" | "Female" | "Other") || undefined,
       last_period_end: profile.last_period_end || "",
-      address: profile.address || "",
       city: profile.city || "",
       fasting_goal: profile.fasting_goal || 16,
     },
@@ -86,7 +83,6 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
         dob: data.dob,
         gender: data.gender,
         last_period_end: data.last_period_end,
-        address: data.address || "",
         city: data.city,
         fasting_goal: data.fasting_goal,
       });
@@ -226,23 +222,6 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
 
             <FormField
               control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your address" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Your street address
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="city"
               render={({ field }) => (
                 <FormItem>
@@ -354,10 +333,6 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
             <p className="text-base">{formatDate(profile.last_period_end)}</p>
           </div>
         )}
-        <div className="md:col-span-2">
-          <p className="text-sm font-medium text-muted-foreground">Address</p>
-          <p className="text-base">{profile.address || "Not set"}</p>
-        </div>
         <div>
           <p className="text-sm font-medium text-muted-foreground">City</p>
           <p className="text-base">{profile.city || "Not set"}</p>

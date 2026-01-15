@@ -89,7 +89,7 @@ export function JournalForm({ mealLogs }: JournalFormProps) {
       if (data.ketone_reading !== undefined) {
         formData.append("ketone_reading", String(data.ketone_reading));
       }
-      if (data.linked_meal_id) {
+      if (data.linked_meal_id && data.linked_meal_id !== "none") {
         formData.append("linked_meal_id", data.linked_meal_id);
       }
 
@@ -232,7 +232,7 @@ export function JournalForm({ mealLogs }: JournalFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="max-h-[300px]">
-                      <SelectItem value="">None - New meal note</SelectItem>
+                      <SelectItem value="none">None - New meal note</SelectItem>
                       {mealLogs.length > 0 ? (
                         mealLogs.map((meal) => {
                           const mealName = meal.content.split("\n")[0] || "Meal";
@@ -251,7 +251,7 @@ export function JournalForm({ mealLogs }: JournalFormProps) {
                           );
                         })
                       ) : (
-                        <SelectItem value="" disabled>
+                        <SelectItem value="no-meals" disabled>
                           No previous meals available
                         </SelectItem>
                       )}
