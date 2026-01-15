@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +40,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { GeneratedRecipe } from "@/lib/types/actions";
+import { getPantry } from "@/lib/actions/pantry";
+import { PantryManager } from "./pantry-manager";
 
 const MAX_REGENERATIONS = 5;
 
@@ -70,6 +72,7 @@ export function RecipeGenerator() {
   const router = useRouter();
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [ingredientInput, setIngredientInput] = useState("");
+  const [pantryItems, setPantryItems] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState<GeneratedRecipe | null>(
     null
@@ -82,6 +85,27 @@ export function RecipeGenerator() {
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1);
   const [regenerationCount, setRegenerationCount] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
+
+  // Load pantry items on mount and when component refreshes
+  useEffect(() => {
+    loadPantry();
+  }, []);
+
+  const loadPantry = async () => {
+    const result = await getPantry();
+    if (result.success && result.data) {
+      setPantryItems(result.data.ingredients);
+    }
+  };
+
+  // Reload pantry when router refreshes (after pantry changes)
+  useEffect(() => {
+    const handleFocus = () => {
+      loadPantry();
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
 
   const form = useForm<RecipeFormValues>({
     resolver: zodResolver(recipeSchema),
@@ -120,8 +144,8 @@ export function RecipeGenerator() {
   };
 
   const handleGenerate = async (isRegeneration: boolean = false) => {
-    if (ingredients.length === 0) {
-      setError("Please add at least one ingredient");
+    if (ingredients.length === 0 && pantryItems.length === 0) {
+      setError("Please add at least one fresh ingredient or set up your pantry");
       return;
     }
 
@@ -135,8 +159,11 @@ export function RecipeGenerator() {
     setIsGenerating(true);
     setError(null);
 
+    // Combine pantry items with fresh ingredients
+    const allIngredients = [...pantryItems, ...ingredients];
+
     try {
-      const result = await generateRecipe(ingredients);
+      const result = await generateRecipe(allIngredients);
       if (!result.success) {
         setError(result.error);
       } else if (result.data?.recipe) {
@@ -215,13 +242,19 @@ export function RecipeGenerator() {
 
   return (
     <div className="space-y-6">
-      {/* Ingredient Input Section */}
+      {/* Pantry Manager Section */}
+      <PantryManager />
+
+      {/* Fresh Ingredients Input Section */}
       <div className="rounded-xl border-2 border-border bg-card p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold">Available Ingredients</h2>
+        <h2 className="mb-2 text-xl font-semibold">Fresh Ingredients</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Add fresh ingredients you have available today. Your pantry items will be automatically included.
+        </p>
         <div className="space-y-4">
           <div className="flex gap-2">
             <Input
-              placeholder="Enter an ingredient (e.g., chicken, broccoli, cheese)"
+              placeholder="Enter fresh ingredient (e.g., chicken, broccoli, fresh herbs)"
               value={ingredientInput}
               onChange={(e) => setIngredientInput(e.target.value)}
               onKeyPress={(e) => {
@@ -256,10 +289,28 @@ export function RecipeGenerator() {
             </div>
           )}
 
+          {pantryItems.length > 0 && (
+            <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+              <p className="mb-2 text-xs font-medium text-muted-foreground">
+                Pantry items (will be included):
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {pantryItems.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Button
             type="button"
             onClick={() => handleGenerate(false)}
-            disabled={isGenerating || ingredients.length === 0}
+            disabled={isGenerating || (ingredients.length === 0 && pantryItems.length === 0)}
             className="w-full rainbow-gradient text-white"
           >
             {isGenerating ? (

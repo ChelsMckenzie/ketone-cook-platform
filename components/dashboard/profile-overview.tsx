@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SOUTH_AFRICAN_CITIES } from "@/lib/constants";
 
 const profileSchema = z.object({
   full_name: z.string().min(1, "Name is required"),
@@ -34,6 +35,7 @@ const profileSchema = z.object({
   }),
   last_period_end: z.string().optional(),
   address: z.string().optional(),
+  city: z.string().min(1, "City is required"),
   fasting_goal: z.number().min(0, "Fasting goal must be a positive number"),
 });
 
@@ -46,6 +48,7 @@ interface ProfileOverviewProps {
     gender: string | null;
     last_period_end: string | null;
     address: string | null;
+    city: string | null;
     fasting_goal: number | null;
   };
 }
@@ -65,6 +68,7 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
       gender: (profile.gender as "Male" | "Female" | "Other") || undefined,
       last_period_end: profile.last_period_end || "",
       address: profile.address || "",
+      city: profile.city || "",
       fasting_goal: profile.fasting_goal || 16,
     },
   });
@@ -83,6 +87,7 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
         gender: data.gender,
         last_period_end: data.last_period_end,
         address: data.address || "",
+        city: data.city,
         fasting_goal: data.fasting_goal,
       });
 
@@ -229,8 +234,38 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
                     <Input placeholder="Enter your address" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Used to tailor recipe suggestions based on ingredient
-                    availability
+                    Your street address
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your city" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[300px]">
+                      {SOUTH_AFRICAN_CITIES.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Select your city in South Africa
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -322,6 +357,10 @@ export function ProfileOverview({ profile }: ProfileOverviewProps) {
         <div className="md:col-span-2">
           <p className="text-sm font-medium text-muted-foreground">Address</p>
           <p className="text-base">{profile.address || "Not set"}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">City</p>
+          <p className="text-base">{profile.city || "Not set"}</p>
         </div>
         <div>
           <p className="text-sm font-medium text-muted-foreground">

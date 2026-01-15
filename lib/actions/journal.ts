@@ -43,6 +43,7 @@ export async function createJournalEntry(
   const ketone_reading = formData.get("ketone_reading")
     ? Number(formData.get("ketone_reading"))
     : undefined;
+  const linked_meal_id = formData.get("linked_meal_id") as string | null;
 
   if (!type || !content) {
     return {
@@ -77,6 +78,7 @@ export async function createJournalEntry(
     content: content,
     image_url: null,
     macros: Object.keys(macrosData).length > 0 ? macrosData : null,
+    linked_meal_id: linked_meal_id || null,
   };
 
   // Type assertion needed due to Supabase type inference limitations

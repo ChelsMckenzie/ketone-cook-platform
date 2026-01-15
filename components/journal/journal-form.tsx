@@ -34,11 +34,23 @@ const journalSchema = z.object({
   energy_level: z.number().min(1).max(9).optional(),
   mood: z.number().min(1).max(9).optional(),
   ketone_reading: z.number().min(0).optional(),
+  linked_meal_id: z.string().optional(),
 });
 
 type JournalFormValues = z.infer<typeof journalSchema>;
 
-export function JournalForm() {
+interface MealLog {
+  id: string;
+  content: string;
+  created_at: string;
+  image_url: string | null;
+}
+
+interface JournalFormProps {
+  mealLogs: MealLog[];
+}
+
+export function JournalForm({ mealLogs }: JournalFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +64,7 @@ export function JournalForm() {
       energy_level: undefined,
       mood: undefined,
       ketone_reading: undefined,
+      linked_meal_id: undefined,
     },
   });
 
@@ -75,6 +88,9 @@ export function JournalForm() {
       }
       if (data.ketone_reading !== undefined) {
         formData.append("ketone_reading", String(data.ketone_reading));
+      }
+      if (data.linked_meal_id) {
+        formData.append("linked_meal_id", data.linked_meal_id);
       }
 
       const result = await createJournalEntry(formData);
@@ -186,6 +202,44 @@ export function JournalForm() {
                   </FormControl>
                   <FormDescription>
                     Enter your blood ketone reading
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {entryType === "meal_note" && mealLogs.length > 0 && (
+            <FormField
+              control={form.control}
+              name="linked_meal_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Link to Previous Meal (Optional)</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a meal to link" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[300px]">
+                      <SelectItem value="">None</SelectItem>
+                      {mealLogs.map((meal) => {
+                        const mealName = meal.content.split("\n")[0] || "Meal";
+                        const date = new Date(meal.created_at).toLocaleDateString();
+                        return (
+                          <SelectItem key={meal.id} value={meal.id}>
+                            {mealName} - {date}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Link this journal entry to a previously logged meal
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

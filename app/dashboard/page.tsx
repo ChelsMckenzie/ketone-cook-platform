@@ -136,6 +136,7 @@ export default async function DashboardPage() {
                 gender: profile.gender,
                 last_period_end: profile.last_period_end || null,
                 address: profile.address || null,
+                city: profile.city || null,
                 fasting_goal: profile.fasting_goal,
               }}
             />

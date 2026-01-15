@@ -1,63 +1,207 @@
-// Application Constants
+// Application-wide constants
 
-// Fasting
-export const FASTING_DEFAULT_HOURS = 16;
-export const FASTING_MIN_HOURS = 12;
-export const FASTING_MAX_HOURS = 24;
+export const MAX_REGENERATIONS = 5;
 
-// Images
-export const MAX_IMAGE_SIZE_BYTES = 5_000_000; // 5MB
-export const COMPRESSED_IMAGE_MAX_BYTES = 900_000; // 900KB
-export const IMAGE_COMPRESSION_QUALITY = 0.8;
-export const IMAGE_COMPRESSION_FALLBACK_QUALITY = 0.6;
-export const IMAGE_MAX_DIMENSION = 1024;
-
-// Pagination
-export const RECIPES_PAGE_SIZE = 10;
-export const JOURNAL_ENTRIES_LIMIT = 5;
-export const MEAL_LOGS_LIMIT = 20;
-
-// Journal Entry Types
 export const JOURNAL_ENTRY_TYPES = [
   "meal_note",
   "personal_note",
   "ketone_reading",
 ] as const;
 
-export type JournalEntryType = (typeof JOURNAL_ENTRY_TYPES)[number];
+// Pagination
+export const RECIPES_PAGE_SIZE = 12;
+export const JOURNAL_ENTRIES_LIMIT = 50;
 
-// Profile Required Fields
-export const REQUIRED_PROFILE_FIELDS = [
-  "full_name",
-  "address",
-  "fasting_goal",
+// Image compression constants
+export const MAX_IMAGE_SIZE_BYTES = 900 * 1024; // 900KB
+export const COMPRESSED_IMAGE_MAX_BYTES = 900 * 1024; // 900KB
+export const IMAGE_COMPRESSION_QUALITY = 0.8;
+export const IMAGE_COMPRESSION_FALLBACK_QUALITY = 0.6;
+export const IMAGE_MAX_DIMENSION = 1024;
+
+// Keto diet constants
+export const KETO_MAX_CARBS_PER_SERVING = 20; // grams
+
+// South African Cities (Major cities and towns)
+export const SOUTH_AFRICAN_CITIES = [
+  "Johannesburg",
+  "Cape Town",
+  "Durban",
+  "Pretoria",
+  "Port Elizabeth",
+  "Bloemfontein",
+  "East London",
+  "Polokwane",
+  "Nelspruit",
+  "Kimberley",
+  "Rustenburg",
+  "Welkom",
+  "Pietermaritzburg",
+  "Potchefstroom",
+  "Klerksdorp",
+  "Upington",
+  "George",
+  "Mossel Bay",
+  "Oudtshoorn",
+  "Knysna",
+  "Stellenbosch",
+  "Paarl",
+  "Somerset West",
+  "Hermanus",
+  "Jeffreys Bay",
+  "Port Alfred",
+  "Grahamstown",
+  "Queenstown",
+  "Uitenhage",
+  "King Williams Town",
+  "Butterworth",
+  "Mthatha",
+  "Newcastle",
+  "Ladysmith",
+  "Richards Bay",
+  "Empangeni",
+  "Vryheid",
+  "Dundee",
+  "Piet Retief",
+  "Standerton",
+  "Vereeniging",
+  "Vanderbijlpark",
+  "Sasolburg",
+  "Kroonstad",
+  "Bethlehem",
+  "Harrismith",
+  "Phuthaditjhaba",
+  "Odendaalsrus",
+  "Bothaville",
+  "Viljoenskroon",
+  "Parys",
+  "Vredefort",
+  "Heilbron",
+  "Frankfort",
+  "Villiers",
+  "Balfour",
+  "Heidelberg",
+  "Nigel",
+  "Springs",
+  "Brakpan",
+  "Benoni",
+  "Kempton Park",
+  "Edenvale",
+  "Germiston",
+  "Alberton",
+  "Orkney",
+  "Stilfontein",
+  "Hartbeesfontein",
+  "Ventersdorp",
+  "Coligny",
+  "Lichtenburg",
+  "Zeerust",
+  "Mafikeng",
+  "Mmabatho",
+  "Vryburg",
+  "Kuruman",
+  "Kathu",
+  "Postmasburg",
+  "Danielskuil",
+  "Campbell",
+  "Griquatown",
+  "Prieska",
+  "Marydale",
+  "Vanwyksvlei",
+  "Carnarvon",
+  "Williston",
+  "Fraserburg",
+  "Sutherland",
+  "Merweville",
+  "Beaufort West",
+  "Laingsburg",
+  "Ladismith",
+  "Calitzdorp",
+  "De Rust",
+  "Uniondale",
+  "Avontuur",
+  "Kareedouw",
+  "Joubertina",
+  "Kruisfontein",
+  "Humansdorp",
+  "St Francis Bay",
+  "Despatch",
+  "Kariega",
+  "Colchester",
+  "Addo",
+  "Kirkwood",
+  "Paterson",
+  "Somerset East",
+  "Pearston",
+  "Graaff-Reinet",
+  "Aberdeen",
+  "Middelburg",
+  "Cradock",
+  "Tarkastad",
+  "Hofmeyr",
+  "Steynsburg",
+  "Venterstad",
+  "Aliwal North",
+  "Burgersdorp",
+  "Jamestown",
+  "Barkly East",
+  "Lady Grey",
+  "Rhodes",
+  "Maclear",
+  "Ugie",
+  "Elliot",
+  "Indwe",
+  "Cala",
+  "Cathcart",
+  "Stutterheim",
+  "Kei Mouth",
+  "Komga",
+  "Idutywa",
+  "Willowvale",
+  "Ngqeleni",
+  "Libode",
+  "Port St Johns",
+  "Lusikisiki",
+  "Flagstaff",
+  "Bizana",
+  "Mount Ayliff",
+  "Mount Frere",
+  "Matatiele",
+  "Cedarville",
+  "Underberg",
+  "Himeville",
+  "Kokstad",
+  "Harding",
+  "Port Shepstone",
+  "Margate",
+  "Ramsgate",
+  "Southbroom",
+  "Port Edward",
+  "Shelly Beach",
+  "Uvongo",
+  "Amanzimtoti",
+  "Kingsburgh",
+  "Umhlanga",
+  "Ballito",
+  "Salt Rock",
+  "Shakas Rock",
+  "Tongaat",
+  "Verulam",
+  "Phoenix",
+  "Chatsworth",
+  "Umlazi",
+  "Umkomaas",
+  "Scottburgh",
+  "Park Rynie",
+  "Pennington",
+  "Ifafa",
+  "Umzinto",
+  "Umzinto Beach",
+  "Hibberdene",
+  "Sezela",
+  "Umzumbe",
+  "Ifafa Beach",
+  "Mtwalume",
+  "Kelso",
+  "Tweni",
 ] as const;
-
-// Recipe Categories
-export const RECIPE_CATEGORIES = [
-  "breakfast",
-  "lunch",
-  "dinner",
-  "snack",
-  "dessert",
-] as const;
-
-export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
-
-// Recipe Difficulties
-export const RECIPE_DIFFICULTIES = ["easy", "medium", "hard"] as const;
-
-export type RecipeDifficulty = (typeof RECIPE_DIFFICULTIES)[number];
-
-// Keto Thresholds
-export const KETO_MAX_CARBS_PER_SERVING = 20;
-
-// Cycle Phases
-export const CYCLE_PHASES = {
-  MENSTRUAL: { start: 1, end: 5, name: "Menstrual" },
-  FOLLICULAR: { start: 6, end: 14, name: "Follicular" },
-  OVULATION: { start: 14, end: 16, name: "Ovulation" },
-  LUTEAL: { start: 17, end: 28, name: "Luteal" },
-} as const;
-
-export const AVERAGE_CYCLE_LENGTH = 28;

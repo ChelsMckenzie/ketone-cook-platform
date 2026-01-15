@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateUserProfile } from "@/lib/actions/user";
+import { SOUTH_AFRICAN_CITIES } from "@/lib/constants";
 
 const onboardingSchema = z.object({
   full_name: z.string().min(1, "Name is required"),
@@ -35,6 +36,7 @@ const onboardingSchema = z.object({
   }),
   last_period_end: z.string().optional(),
   address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
   fasting_goal: z.number().min(0, "Fasting goal must be a positive number"),
 });
 
@@ -53,6 +55,7 @@ export function OnboardingWizard() {
       gender: undefined,
       last_period_end: "",
       address: "",
+      city: "",
       fasting_goal: 16,
     },
     mode: "onChange",
@@ -64,12 +67,13 @@ export function OnboardingWizard() {
   const onSubmit = async (data: OnboardingFormValues) => {
     setIsSubmitting(true);
     try {
-      const result = await updateUserProfile({
+      const result =       await updateUserProfile({
         full_name: data.full_name,
         dob: data.dob,
         gender: data.gender,
         last_period_end: data.last_period_end,
         address: data.address,
+        city: data.city,
         fasting_goal: data.fasting_goal,
       });
 
@@ -106,12 +110,12 @@ export function OnboardingWizard() {
       if (gender === "Female") {
         fieldsToValidate = ["last_period_end"];
       } else {
-        // For non-Female, step 3 is the final step with Address/Fasting
-        fieldsToValidate = ["address", "fasting_goal"];
+        // For non-Female, step 3 is the final step with Address/City/Fasting
+        fieldsToValidate = ["address", "city", "fasting_goal"];
       }
     } else if (currentStep === 4) {
       // Final step for Female users
-      fieldsToValidate = ["address", "fasting_goal"];
+      fieldsToValidate = ["address", "city", "fasting_goal"];
     }
 
     const isValid = await form.trigger(fieldsToValidate);
@@ -259,7 +263,7 @@ export function OnboardingWizard() {
             </div>
           )}
 
-          {/* Step 4 (or Step 3 if not Female): Address, Fasting Goal */}
+          {/* Step 4 (or Step 3 if not Female): Address, City, Fasting Goal */}
           {((currentStep === 4 && gender === "Female") ||
             (currentStep === 3 && gender !== "Female")) && (
             <div className="space-y-6">
@@ -276,7 +280,38 @@ export function OnboardingWizard() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Your location for personalized recommendations
+                      Your street address for personalized recommendations
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your city" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-[300px]">
+                        {SOUTH_AFRICAN_CITIES.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select your city in South Africa
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

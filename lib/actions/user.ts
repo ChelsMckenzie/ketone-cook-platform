@@ -13,6 +13,7 @@ export interface OnboardingFormData {
   gender: string;
   last_period_end?: string;
   address: string;
+  city: string;
   fasting_goal: number;
 }
 
@@ -41,6 +42,7 @@ export async function updateUserProfile(
     gender: data.gender || null,
     last_period_end: data.last_period_end || null,
     address: data.address,
+    city: data.city,
     fasting_goal: data.fasting_goal,
     updated_at: new Date().toISOString(),
   };

@@ -43,6 +43,7 @@ export interface Database {
           last_period_end: string | null;
           location_type: LocationType | null;
           address: string | null;
+          city: string | null;
           activity_level: ActivityLevel | null;
           fasting_goal: number | null;
           created_at: string;
@@ -58,6 +59,7 @@ export interface Database {
           last_period_end?: string | null;
           location_type?: LocationType | null;
           address?: string | null;
+          city?: string | null;
           activity_level?: ActivityLevel | null;
           fasting_goal?: number | null;
           created_at?: string;
@@ -73,6 +75,7 @@ export interface Database {
           last_period_end?: string | null;
           location_type?: LocationType | null;
           address?: string | null;
+          city?: string | null;
           activity_level?: ActivityLevel | null;
           fasting_goal?: number | null;
           created_at?: string;
@@ -128,6 +131,7 @@ export interface Database {
           content: string;
           image_url: string | null;
           macros: MacroData | null;
+          linked_meal_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -137,6 +141,7 @@ export interface Database {
           content: string;
           image_url?: string | null;
           macros?: MacroData | null;
+          linked_meal_id?: string | null;
           created_at?: string;
         };
         Update: {
@@ -146,7 +151,31 @@ export interface Database {
           content?: string;
           image_url?: string | null;
           macros?: MacroData | null;
+          linked_meal_id?: string | null;
           created_at?: string;
+        };
+      };
+      pantry: {
+        Row: {
+          id: string;
+          user_id: string;
+          ingredient_name: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          ingredient_name: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          ingredient_name?: string;
+          created_at?: string;
+          updated_at?: string;
         };
       };
       recipe_favorites: {
@@ -199,3 +228,7 @@ export type LogUpdate = Database["public"]["Tables"]["logs"]["Update"];
 
 export type RecipeFavorite = Database["public"]["Tables"]["recipe_favorites"]["Row"];
 export type RecipeFavoriteInsert = Database["public"]["Tables"]["recipe_favorites"]["Insert"];
+
+export type Pantry = Database["public"]["Tables"]["pantry"]["Row"];
+export type PantryInsert = Database["public"]["Tables"]["pantry"]["Insert"];
+export type PantryUpdate = Database["public"]["Tables"]["pantry"]["Update"];

@@ -10,6 +10,7 @@ export interface ProfileUpdateData {
   gender: string;
   last_period_end?: string;
   address: string;
+  city: string;
   fasting_goal: number;
 }
 
@@ -39,6 +40,7 @@ export async function updateProfile(
       gender: data.gender || null,
       last_period_end: data.last_period_end || null,
       address: data.address || null,
+      city: data.city || null,
       fasting_goal: data.fasting_goal,
       updated_at: new Date().toISOString(),
     })
