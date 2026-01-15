@@ -14,6 +14,21 @@ export type ActivityLevel =
   | "moderately_active"
   | "very_active";
 
+export type JournalEntryType = "meal_note" | "personal_note" | "ketone_reading";
+
+export interface MacroData {
+  carbs?: number;
+  protein?: number;
+  fat?: number;
+  calories?: number;
+  vegetables?: number;
+  proteins?: number;
+  carb_warning?: string;
+  energy_level?: number;
+  mood?: number;
+  ketone_reading?: number;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -105,6 +120,55 @@ export interface Database {
           is_public?: boolean;
         };
       };
+      logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          type: JournalEntryType;
+          content: string;
+          image_url: string | null;
+          macros: MacroData | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          type: JournalEntryType;
+          content: string;
+          image_url?: string | null;
+          macros?: MacroData | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          type?: JournalEntryType;
+          content?: string;
+          image_url?: string | null;
+          macros?: MacroData | null;
+          created_at?: string;
+        };
+      };
+      recipe_favorites: {
+        Row: {
+          id: string;
+          user_id: string;
+          recipe_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          recipe_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          recipe_id?: string;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -115,6 +179,23 @@ export interface Database {
     Enums: {
       location_type: LocationType;
       activity_level: ActivityLevel;
+      journal_entry_type: JournalEntryType;
     };
   };
 }
+
+// Helper types for easier access
+export type Profile = Database["public"]["Tables"]["profile"]["Row"];
+export type ProfileInsert = Database["public"]["Tables"]["profile"]["Insert"];
+export type ProfileUpdate = Database["public"]["Tables"]["profile"]["Update"];
+
+export type Recipe = Database["public"]["Tables"]["recipes"]["Row"];
+export type RecipeInsert = Database["public"]["Tables"]["recipes"]["Insert"];
+export type RecipeUpdate = Database["public"]["Tables"]["recipes"]["Update"];
+
+export type Log = Database["public"]["Tables"]["logs"]["Row"];
+export type LogInsert = Database["public"]["Tables"]["logs"]["Insert"];
+export type LogUpdate = Database["public"]["Tables"]["logs"]["Update"];
+
+export type RecipeFavorite = Database["public"]["Tables"]["recipe_favorites"]["Row"];
+export type RecipeFavoriteInsert = Database["public"]["Tables"]["recipe_favorites"]["Insert"];

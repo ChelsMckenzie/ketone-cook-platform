@@ -1,0 +1,20 @@
+# KetoMate Robots.txt
+# https://ketomate.co.za
+
+User-agent: *
+Allow: /
+
+# Disallow private/authenticated routes from indexing
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /auth/
+Disallow: /api/
+
+# Allow public pages
+Allow: /
+Allow: /login
+Allow: /signup
+Allow: /recipes/
+
+# Sitemap location
+Sitemap: https://ketomate.co.za/sitemap.xml

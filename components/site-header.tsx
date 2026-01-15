@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/auth/user-menu";
 import { Button } from "@/components/ui/button";
+import { NavigationMenu } from "@/components/navigation/navigation-menu";
 
 export async function SiteHeader() {
   const supabase = await createClient();
@@ -20,18 +21,24 @@ export async function SiteHeader() {
   }
 
   return (
-    <header className="border-b border-border">
+    <header className="border-b-2 border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/">
-            <h1 className="text-2xl font-bold text-foreground">Keto Companion</h1>
+          <Link href="/" className="flex flex-col">
+            <h1 className="text-2xl font-bold rainbow-text">KetoMate</h1>
+            <span className="text-[10px] text-muted-foreground hidden sm:block">
+              Smart keto, simplified
+            </span>
           </Link>
-          <nav className="flex items-center gap-3">
+          <nav className="flex items-center gap-4">
             {user ? (
-              <UserMenu
-                userEmail={userProfile?.email || user.email || undefined}
-                userName={userProfile?.full_name || undefined}
-              />
+              <>
+                <NavigationMenu />
+                <UserMenu
+                  userEmail={userProfile?.email || user.email || undefined}
+                  userName={userProfile?.full_name || undefined}
+                />
+              </>
             ) : (
               <>
                 <Button variant="outline" asChild>
@@ -48,4 +55,3 @@ export async function SiteHeader() {
     </header>
   );
 }
-

@@ -1,4 +1,4 @@
--- Supabase schema for Keto Companion (Ketone-Cook)
+-- Supabase schema for KetoMate (https://ketomate.co.za)
 -- Paste this into the Supabase SQL editor and run it.
 -- Safe to re-run: uses IF NOT EXISTS and drops policies before recreating.
 
