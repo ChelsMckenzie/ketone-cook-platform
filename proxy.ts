@@ -1,13 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Check if environment variables are set
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("Missing Supabase environment variables in middleware");
+    console.error("Missing Supabase environment variables in proxy");
     // Return a response that allows the request to continue
     // The app will handle the missing config in components
     return NextResponse.next({
@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
     await supabase.auth.getUser();
   } catch (error) {
     // Log error but don't fail the request
-    console.error("Middleware Supabase error:", error);
+    console.error("Proxy Supabase error:", error);
     // Return response to allow request to continue
   }
 
