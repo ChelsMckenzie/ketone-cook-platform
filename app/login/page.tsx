@@ -30,6 +30,21 @@ export default async function LoginPage({
               Email confirmation failed. Please try clicking the confirmation link again or request a new one.
             </div>
           )}
+          {params?.error === "reset_failed" && (
+            <div className="mb-4 rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
+              Password reset link is invalid or has expired. Please request a new password reset.
+            </div>
+          )}
+          {params?.error === "reset_session_expired" && (
+            <div className="mb-4 rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
+              Your password reset session has expired. Please request a new password reset link.
+            </div>
+          )}
+          {params?.error === "session_expired" && (
+            <div className="mb-4 rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
+              Your session has expired. Please try again.
+            </div>
+          )}
           <LoginForm />
         </div>
       </div>

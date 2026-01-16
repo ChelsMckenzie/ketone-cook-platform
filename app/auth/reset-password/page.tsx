@@ -20,9 +20,9 @@ export default async function ResetPasswordPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If user is not authenticated, redirect to login
+  // If user is not authenticated, redirect to login with helpful message
   if (!user) {
-    redirect("/login?error=session_expired");
+    redirect("/login?error=reset_session_expired");
   }
 
   const params = await searchParams;

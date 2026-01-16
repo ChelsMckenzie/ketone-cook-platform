@@ -40,6 +40,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Verify user is authenticated after exchange
+    const {
+      data: { user: resetUser },
+      error: getUserError,
+    } = await supabase.auth.getUser();
+
+    if (getUserError || !resetUser) {
+      console.error("Error getting user after password reset exchange:", getUserError);
+      return NextResponse.redirect(
+        new URL("/login?error=session_expired", request.url)
+      );
+    }
+
     // Redirect to reset password page
     return NextResponse.redirect(new URL("/auth/reset-password", request.url));
   }
