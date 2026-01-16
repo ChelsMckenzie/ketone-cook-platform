@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; reset?: string }>;
 }) {
   const supabase = await createClient();
   const {
@@ -26,6 +26,9 @@ export default async function ResetPasswordPage({
   }
 
   const params = await searchParams;
+  
+  // IMPORTANT: This page should NEVER redirect to onboarding
+  // Password reset should work regardless of profile completion status
 
   return (
     <div className="min-h-screen bg-background">

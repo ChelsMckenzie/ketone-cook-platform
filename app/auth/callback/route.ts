@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get("code");
   const type = requestUrl.searchParams.get("type");
   
+  // Log for debugging (remove in production if needed)
+  console.log("Auth callback - code:", code ? "present" : "missing", "type:", type || "none");
+  
   // Create Supabase client with proper cookie handling for route handlers
   const cookieStore = await cookies();
   const supabase = createServerClient(
@@ -29,7 +32,9 @@ export async function GET(request: NextRequest) {
     }
   );
 
-  // Handle password reset callback
+  // Handle password reset callback - MUST be checked first before OAuth
+  // Password reset emails should include type=recovery
+  // This is the PRIMARY handler for password reset - do not add profile checks here
   if (code && type === "recovery") {
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -53,11 +58,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Redirect to reset password page
-    return NextResponse.redirect(new URL("/auth/reset-password", request.url));
+    // IMPORTANT: Redirect directly to reset password page with a flag
+    // Do NOT check profile completion - password reset should work regardless
+    // Add a query parameter to indicate this is a password reset flow
+    const resetUrl = new URL("/auth/reset-password", request.url);
+    resetUrl.searchParams.set("reset", "true");
+    return NextResponse.redirect(resetUrl);
   }
 
-  // Handle OAuth callback
+  // Handle OAuth callback (only if type is not recovery and not signup)
   if (code && !type) {
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -119,22 +128,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Handle password reset callback
-  if (code && type === "recovery") {
-    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (exchangeError) {
-      console.error("Password reset exchange error:", exchangeError);
-      return NextResponse.redirect(
-        new URL("/login?error=reset_failed", request.url)
-      );
-    }
-
-    // Redirect to reset password page
-    return NextResponse.redirect(new URL("/auth/reset-password", request.url));
-  }
-
-  // Handle email confirmation flow (if not OAuth)
+  // Handle email confirmation flow (if not OAuth and not recovery)
   if (code && type === "signup") {
     // Check if user has completed onboarding
     const {
